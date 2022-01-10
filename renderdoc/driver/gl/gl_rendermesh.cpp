@@ -206,8 +206,10 @@ void GLReplay::RenderMesh(uint32_t eventId, const rdcarray<MeshFormat> &secondar
       }
     }
     else if(meshData[i]->format.compType == CompType::Float ||
+            meshData[i]->format.compType == CompType::Fixed ||
             meshData[i]->format.compType == CompType::UNorm ||
-            meshData[i]->format.compType == CompType::SNorm)
+            meshData[i]->format.compType == CompType::SNorm ||
+            meshData[i]->format.compType == CompType::XNorm)
     {
       if(meshData[i]->format.compByteWidth == 8)
       {
@@ -223,6 +225,9 @@ void GLReplay::RenderMesh(uint32_t eventId, const rdcarray<MeshFormat> &secondar
         {
           if(meshData[i]->format.compType == CompType::Float)
             fmttype = eGL_FLOAT;
+          else if(meshData[i]->format.compType == CompType::Fixed ||
+                  meshData[i]->format.compType == CompType::XNorm)
+            fmttype = eGL_FIXED;
           else if(meshData[i]->format.compType == CompType::UNorm)
             fmttype = eGL_UNSIGNED_INT;
           else if(meshData[i]->format.compType == CompType::SNorm)
@@ -246,7 +251,9 @@ void GLReplay::RenderMesh(uint32_t eventId, const rdcarray<MeshFormat> &secondar
         }
 
         drv.glVertexAttribFormat(i, meshData[i]->format.compCount, fmttype,
-                                 meshData[i]->format.compType != CompType::Float, 0);
+                                 (meshData[i]->format.compType != CompType::Float) &&
+                                 (meshData[i]->format.compType != CompType::Fixed),
+                                 0);
       }
     }
     else if(meshData[i]->format.compType == CompType::UInt ||

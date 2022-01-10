@@ -924,6 +924,10 @@ void GLReplay::SavePipelineState(uint32_t eventId)
         fmt.compByteWidth = 4;
         fmt.compType = CompType::Float;
         break;
+      case eGL_FIXED:
+        fmt.compByteWidth = 4;
+        fmt.compType = CompType::Fixed;
+        break;
       case eGL_DOUBLE:
         fmt.compByteWidth = 8;
         fmt.compType = CompType::Float;
@@ -974,7 +978,7 @@ void GLReplay::SavePipelineState(uint32_t eventId)
     }
 
     // normalized/floatCast flags are irrelevant for float formats
-    if(fmt.compType == CompType::SInt || fmt.compType == CompType::UInt)
+    if(fmt.compType == CompType::SInt || fmt.compType == CompType::UInt || fmt.compType == CompType::Fixed)
     {
       // if it wasn't an integer, it's cast to float
       pipe.vertexInput.attributes[i].floatCast = !integer;
@@ -983,7 +987,7 @@ void GLReplay::SavePipelineState(uint32_t eventId)
       if(!integer)
       {
         if(normalized != 0)
-          fmt.compType = (fmt.compType == CompType::SInt) ? CompType::SNorm : CompType::UNorm;
+          fmt.compType = (fmt.compType == CompType::SInt) ? CompType::SNorm : (fmt.compType == CompType::Fixed ? CompType::XNorm : CompType::UNorm);
       }
     }
     else

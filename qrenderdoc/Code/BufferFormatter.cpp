@@ -737,6 +737,10 @@ QString BufferFormatter::GetBufferFormatString(const ShaderResource &res,
               format = lit("int");
             if(viewFormat.compType == CompType::Float)
               format = lit("float");
+            if(viewFormat.compType == CompType::Fixed)
+              format = lit("fixed");
+            if(viewFormat.compType == CompType::XNorm)
+              format = lit("xnormf");
             break;
           }
         }
@@ -1470,8 +1474,10 @@ QVariantList GetVariants(ResourceFormat format, const ShaderConstantDescriptor &
             ret.push_back(readObj<float>(data, end, ok));
           else if(format.compByteWidth == 2)
             ret.push_back(RENDERDOC_HalfToFloat(readObj<uint16_t>(data, end, ok)));
-        }
-        else if(format.compType == CompType::SInt)
+        } else if(format.compType == CompType::Fixed)
+        {
+          ret.push_back((int)readObj<int32_t>(data, end, ok));
+        } else if(format.compType == CompType::SInt)
         {
           if(format.compByteWidth == 8)
             ret.push_back((qlonglong)readObj<int64_t>(data, end, ok));

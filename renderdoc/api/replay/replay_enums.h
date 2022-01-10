@@ -360,8 +360,10 @@ enum class CompType : uint8_t
 {
   Typeless = 0,
   Float,
+  Fixed,
   UNorm,
   SNorm,
+  XNorm,
   UInt,
   SInt,
   UScaled,
